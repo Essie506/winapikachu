@@ -105,6 +105,13 @@ if(Math.abs(velocity) > 0.1){
 
 requestAnimationFrame(spinMomentum);
 
+}else{
+
+// 🎉 WHEEL HAS STOPPED → GO TO WIN PAGE
+setTimeout(() => {
+window.location.href = "win.html";
+}, 500);
+
 }
 
 }
