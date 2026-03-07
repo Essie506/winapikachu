@@ -1,16 +1,66 @@
-js spin wheel script
+HOME
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Win a Pikachu! - Home</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- Navbar background / logo -->
+  <nav class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="nav-content">
+          <!-- logo or brand text -->
+      </div>
+  </nav>
+
+ <button class="menu-toggle" id="menuToggle">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+ 
+  <!-- Hero / main content comes here -->
+
+<main class="hero">
+  <h1>Win A Pikachu!</h1>
+
+  <div class="mobile-wheel">
+
+ <div class="wheel-wrapper">
+
+<div class="pointer"></div>
+
+<div class="wheel" id="wheel">
+
+ <div class="segment"><i class="fa-solid fa-bicycle"></i></div>
+ <div class="segment"><i class="fa-solid fa-person-running"></i></div>
+ <div class="segment"><i class="fa-solid fa-person-walking"></i></div>
+ <div class="segment"><i class="fa-solid fa-spa"></i></div>
+ <div class="segment"><i class="fa-solid fa-bolt"></i></div>
+ <div class="segment"><i class="fa-solid fa-heart-pulse"></i></div>
+
+</div>
+
+<div class="hub" onclick="spinWheel()">SPIN</div>
 
 <script>
 
-let wheel = document.getElementById("wheel");
+const wheel = document.getElementById("wheel");
 
-let startAngle = 0;
-let currentRotation = 0;
+let rotation = 0;
+let velocity = 0;
 let isDragging = false;
-
-wheel.addEventListener("touchstart", startDrag);
-wheel.addEventListener("touchmove", dragWheel);
-wheel.addEventListener("touchend", endDrag);
+let lastAngle = 0;
 
 function getAngle(x,y){
 
@@ -19,46 +69,77 @@ const cx = rect.left + rect.width/2;
 const cy = rect.top + rect.height/2;
 
 return Math.atan2(y-cy,x-cx) * 180/Math.PI;
+
 }
 
-function startDrag(e){
+wheel.addEventListener("touchstart",(e)=>{
 
 isDragging = true;
+velocity = 0;
 
 const touch = e.touches[0];
-startAngle = getAngle(touch.clientX,touch.clientY) - currentRotation;
+lastAngle = getAngle(touch.clientX,touch.clientY);
 
-}
+});
 
-function dragWheel(e){
+wheel.addEventListener("touchmove",(e)=>{
 
 if(!isDragging) return;
 
 const touch = e.touches[0];
+const angle = getAngle(touch.clientX,touch.clientY);
 
-currentRotation = getAngle(touch.clientX,touch.clientY) - startAngle;
+let delta = angle - lastAngle;
 
-wheel.style.transform = `rotate(${currentRotation}deg)`;
+rotation += delta;
+velocity = delta;
+
+wheel.style.transform = `rotate(${rotation}deg)`;
+
+lastAngle = angle;
+
+});
+
+wheel.addEventListener("touchend",()=>{
+
+isDragging = false;
+spinMomentum();
+
+});
+
+function spinMomentum(){
+
+rotation += velocity;
+
+velocity *= 0.95;   // friction
+
+wheel.style.transform = `rotate(${rotation}deg)`;
+
+if(Math.abs(velocity) > 0.1){
+
+requestAnimationFrame(spinMomentum);
 
 }
 
-function endDrag(){
+}
 
-isDragging = false;
+function spinWheel(){
+
+velocity = Math.random()*20 + 25;
+
+spinMomentum();
 
 }
 
 </script>
+  
+<p class="hero-subtext">
+Did you win a pikachu?
+</p>
+    
+</main>
 
-   
-<script>  
-let rotation = 0;
+<footer>
+  © 2026 Pikachu's for the win!
+</footer>
 
-function spinWheel(){
-
-rotation += Math.floor(Math.random()*360) + 1080;
-
-document.getElementById("wheel").style.transform =
-`rotate(${rotation}deg)`;
-}  
-</script> 
